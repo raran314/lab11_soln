@@ -208,10 +208,32 @@ Exercise 3.1: Define the `raises_exception` function. Ideally, your
 function should compile without warnings.
 ....................................................................*)
 
+(* The key to this problem is the use of `try....with` to catch and
+   handle the exception. Here's the intended solution: *)
+    
 let raises_exception (f : unit -> 'a) : bool =
   try let _ = f () in
       false
   with _ -> true ;;
+
+(* Later, in Chapter 15, we'll introduce the `;` operator and the
+   `ignore` function. Using `;` we can sequence the application of `f`
+   and the `false` return value: 
+
+      let raises_exception (f : unit -> 'a) : bool =
+        try f (); 
+            false
+        with _ -> true ;;
+
+but this may generate a warning that the expression before the
+semicolon should have type `unit`. The `ignore` function can help with
+that:
+
+      let raises_exception (f : unit -> 'a) : bool =
+        try ignore (f ()); 
+            false
+        with _ -> true ;;
+ *)
 
 (*....................................................................
 Exercise 3.2: Replace the `failwith` expression below with the
@@ -434,8 +456,8 @@ let rec zip_combo (lefts : 'left list)
   match lefts, rights with
   | [], rights -> right_list rights
   | lefts, [] -> left_list lefts
-  | left_hd :: left_tail, right_hd :: right_tl ->
-     Both (left_hd, right_hd) :: (zip_combo left_tail right_tl) ;;
+  | left_hd :: left_tl, right_hd :: right_tl ->
+     Both (left_hd, right_hd) :: (zip_combo left_tl right_tl) ;;
 
 (*====================================================================
 Part 6. Directory structures
